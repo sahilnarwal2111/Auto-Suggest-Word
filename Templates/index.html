@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Autocorrect System</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body style="background:#f7f7f7;">
+    <div class="container mt-5">
+        <h1>Auto Word Suggest</h1>
+        <form id="suggestForm" method="POST" action="/suggest" class="mt-4">
+            <div class="form-group">
+                <label for="keyword">Enter a word:</label>
+                <input type="text" id = "keyword" class="form-control" id="keyword" name="keyword" required>
+            </div>
+            <!-- <button type="submit" class="btn btn-primary">Submit</button> -->
+        </form>
+        <div id="suggestions" class="mt-4" style="display: none;">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Suggested Word</th>
+                        <th>Similarity</th>
+                    </tr>
+                </thead>
+                <tbody id="suggestionsBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script>
+        $('#keyword').on('input', function() {
+            if (this.value.length > 1) {
+                $.ajax({
+                    url: '/suggest',
+                    type: 'POST',
+                    data: $('#suggestForm').serialize(),
+                    success: function(data) {
+                        $('#suggestions').show();
+                        $('#suggestionsBody').empty();
+                        data.suggestions.forEach(function(suggestion) {
+                            $('#suggestionsBody').append('<tr><td>' + suggestion.Word + '</td><td>' + suggestion.Similarity + '</td></tr>');
+                        });
+                    }
+                });
+            } else {
+                $('#suggestions').hide();
+            }
+        });
+    </script>
+</body>
+</html>
